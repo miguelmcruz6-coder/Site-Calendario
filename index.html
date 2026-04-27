@@ -1,0 +1,44 @@
+<!-- ================= index.html ================= -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calendário</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Tela de Login -->
+  <div id="loginScreen" class="center">
+    <h2>Entrar</h2>
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Senha" />
+    <div class="actions">
+      <button onclick="loginEmail()">Login</button>
+      <button onclick="registerEmail()">Registrar</button>
+      <button onclick="loginGoogle()">Google</button>
+      <button onclick="loginAnon()">Continuar Anônimo</button>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app" class="hidden">
+    <header>
+      <h1>Calendário</h1>
+      <button onclick="logout()">Sair</button>
+    </header>
+
+    <div id="calendar"></div>
+
+    <div id="modal" class="hidden">
+      <h3>Novo Lembrete</h3>
+      <input id="reminderText" placeholder="Texto" />
+      <button onclick="saveReminder()">Salvar</button>
+    </div>
+  </div>
+
+  <script type="module" src="firebaseConfig.js"></script>
+  <script type="module" src="crud.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

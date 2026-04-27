@@ -1,0 +1,7 @@
+body { font-family: Arial; margin: 0; }
+.center { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; }
+.actions button { margin:5px; }
+.hidden { display:none; }
+
+#calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; padding:20px; }
+.day { border:1px solid #ccc; padding:20px; cursor:pointer; }
