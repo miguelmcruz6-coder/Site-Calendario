@@ -1,44 +1,267 @@
-<!-- ================= index.html ================= -->
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Calendário</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fluxo de Caixa Pessoal</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-  <!-- Tela de Login -->
-  <div id="loginScreen" class="center">
-    <h2>Entrar</h2>
-    <input id="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Senha" />
-    <div class="actions">
-      <button onclick="loginEmail()">Login</button>
-      <button onclick="registerEmail()">Registrar</button>
-      <button onclick="loginGoogle()">Google</button>
-      <button onclick="loginAnon()">Continuar Anônimo</button>
+    <!-- LOADING -->
+    <div id="loading" class="loading hidden">
+        <div class="loader"></div>
     </div>
-  </div>
 
-  <!-- App -->
-  <div id="app" class="hidden">
-    <header>
-      <h1>Calendário</h1>
-      <button onclick="logout()">Sair</button>
-    </header>
+    <!-- AUTH -->
+    <section id="auth-section" class="auth-container">
 
-    <div id="calendar"></div>
+        <div class="auth-card">
 
-    <div id="modal" class="hidden">
-      <h3>Novo Lembrete</h3>
-      <input id="reminderText" placeholder="Texto" />
-      <button onclick="saveReminder()">Salvar</button>
-    </div>
-  </div>
+            <h1>Fluxo de Caixa</h1>
+            <p class="subtitle">Controle financeiro inteligente</p>
 
-  <script type="module" src="firebaseConfig.js"></script>
-  <script type="module" src="crud.js"></script>
-  <script type="module" src="main.js"></script>
+            <!-- LOGIN -->
+            <div id="login-box">
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="Digite seu email">
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="login-password" placeholder="Digite sua senha">
+                </div>
+
+                <button id="login-btn" class="primary-btn">
+                    Entrar
+                </button>
+
+                <p class="switch-text">
+                    Não possui conta?
+                    <span id="show-register">Cadastrar</span>
+                </p>
+
+            </div>
+
+            <!-- REGISTER -->
+            <div id="register-box" class="hidden">
+
+                <div class="input-group">
+                    <label>Nome</label>
+                    <input type="text" id="register-name" placeholder="Seu nome">
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="register-email" placeholder="Seu email">
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="register-password" placeholder="Senha">
+                </div>
+
+                <div class="input-group">
+                    <label>Confirmar Senha</label>
+                    <input type="password" id="register-confirm-password" placeholder="Confirme a senha">
+                </div>
+
+                <button id="register-btn" class="primary-btn">
+                    Criar Conta
+                </button>
+
+                <p class="switch-text">
+                    Já possui conta?
+                    <span id="show-login">Entrar</span>
+                </p>
+
+            </div>
+
+            <p id="auth-message" class="message"></p>
+
+        </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard-section" class="dashboard hidden">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div>
+
+                <h2>Minhas Abas</h2>
+
+                <!-- PESQUISA -->
+                <input type="text" id="search-cashflow" class="search-input" placeholder="Pesquisar aba...">
+
+                <div class="create-tab">
+                    <input type="text" id="cashflow-name" placeholder="Nova aba">
+                    <button id="create-cashflow-btn">Criar Aba</button>
+                </div>
+
+                <div id="cashflow-list" class="cashflow-list"></div>
+
+            </div>
+
+            <div class="sidebar-bottom">
+
+                <div class="balance-box">
+                    <span>Saldo Atual</span>
+                    <h3 id="sidebar-balance">R$ 0,00</h3>
+                </div>
+
+                <button id="logout-btn" class="logout-btn">
+                    Sair
+                </button>
+
+            </div>
+
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+
+            <!-- TOP -->
+            <header class="topbar">
+                <div>
+                    <h1 id="selected-cashflow-title">
+                        Dashboard
+                    </h1>
+                    <p id="welcome-user"></p>
+                </div>
+            </header>
+
+            <!-- FILTERS -->
+            <section class="filters">
+
+                <select id="filter-month">
+                    <option value="">Todos os meses</option>
+                </select>
+
+                <select id="filter-year">
+                    <option value="">Todos os anos</option>
+                </select>
+
+                <select id="filter-category">
+                    <option value="">Todas categorias</option>
+                </select>
+
+                <select id="filter-type">
+                    <option value="">Todos os tipos</option>
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
+
+            </section>
+
+            <!-- CARDS -->
+            <section class="cards">
+
+                <div class="card">
+                    <span>Total Entradas</span>
+                    <h2 id="income-total">R$ 0,00</h2>
+                </div>
+
+                <div class="card">
+                    <span>Total Saídas</span>
+                    <h2 id="expense-total">R$ 0,00</h2>
+                </div>
+
+                <div class="card">
+                    <span>Saldo Final</span>
+                    <h2 id="balance-total">R$ 0,00</h2>
+                </div>
+
+                <div class="card">
+                    <span>Transações</span>
+                    <h2 id="transactions-total">0</h2>
+                </div>
+
+            </section>
+
+            <!-- TRANSACTION FORM -->
+            <section class="transaction-form">
+
+                <h2>Nova Transação</h2>
+
+                <div class="form-grid">
+
+                    <input type="text" id="transaction-description" placeholder="Descrição">
+
+                    <input type="number" id="transaction-value" placeholder="Valor">
+
+                    <select id="transaction-type">
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+
+                    <input type="text" id="transaction-category" placeholder="Categoria">
+
+                    <input type="date" id="transaction-date">
+
+                </div>
+
+                <button id="add-transaction-btn" class="primary-btn">
+                    Adicionar Transação
+                </button>
+
+            </section>
+
+            <!-- TABLE -->
+            <section class="transactions-section">
+
+                <div class="section-title">
+                    <h2>Transações</h2>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="transactions-table"></tbody>
+
+                    </table>
+                </div>
+
+            </section>
+
+            <!-- REPORTS -->
+            <section class="charts-section">
+
+                <div class="chart-card">
+                    <h3>Gastos por Categoria</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Ganhos vs Gastos</h3>
+                    <canvas id="balanceChart"></canvas>
+                </div>
+
+            </section>
+
+        </main>
+
+    </section>
+
+    <script type="module" src="./main.js"></script>
+
 </body>
+
 </html>
